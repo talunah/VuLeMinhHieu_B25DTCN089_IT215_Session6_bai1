@@ -64,10 +64,16 @@ async def delete_courses(course_id:int):
     
 @app.get("/courses")
 async def get_courses(keyword: str = Query(default=""),min_fee: int = Query(default="",ge=0), max_fee: int = Query(default="")):
+    unfilted_list = courses
+    courses_list = []
     if keyword:
         courses_list = [course for course in courses if (keyword.lower() in course["code"].lower() or keyword.lower() in course["name"].lower())]
     if min_fee:
         courses_list = [course for course in courses if float(course["fee"]) >= min_fee]
     if max_fee:
         courses_list = [course for course in courses if float(course["fee"]) <= max_fee]
+        
+    if not courses_list:
+        return unfilted_list
+    
     return courses_list
